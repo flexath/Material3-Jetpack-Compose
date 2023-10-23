@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyJetpackComposeApp">
+        <activity
+            android:name=".BottomNavigationBarActivity"
+            android:exported="false"
+            android:label="@string/title_activity_bottom_navigation_bar"
+            android:theme="@style/Theme.MyJetpackComposeApp" />
+        <activity
+            android:name=".AppBarsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_app_bars"
+            android:theme="@style/Theme.MyJetpackComposeApp" />
+        <activity
+            android:name=".SelectionComponentActivity"
+            android:exported="false"
+            android:label="@string/title_activity_selection_component"
+            android:theme="@style/Theme.MyJetpackComposeApp" />
+        <activity
+            android:name=".DetailActivity"
+            android:exported="false"
+            android:label="@string/title_activity_detail"
+            android:theme="@style/Theme.MyJetpackComposeApp" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MyJetpackComposeApp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
