@@ -15,7 +15,6 @@ import com.flexathimyanmar.myjetpackcomposeapp.nav_graph.Screen
 @Composable
 fun NavHost(navController: NavHostController) {
 
-
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {

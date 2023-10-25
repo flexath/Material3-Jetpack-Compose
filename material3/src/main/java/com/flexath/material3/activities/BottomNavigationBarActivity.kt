@@ -1,4 +1,4 @@
-package com.flexath.material3
+package com.flexath.material3.activities
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -27,7 +26,6 @@ import androidx.compose.material.icons.outlined.MonitorHeart
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,7 +43,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -54,11 +51,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.Navigation
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.flexath.material3.nav_graph.CHAT_SCREEN
+import com.flexath.material3.nav_graph.HOME_SCREEN
+import com.flexath.material3.nav_graph.NavHost
+import com.flexath.material3.nav_graph.SETTING_SCREEN
 import com.flexath.material3.ui.theme.MyJetpackComposeAppTheme
 import kotlinx.coroutines.launch
 
 class BottomNavigationBarActivity : ComponentActivity() {
+
+    private lateinit var navController:NavHostController
 
     companion object {
         fun newIntent(context: Context): Intent {
@@ -71,12 +75,8 @@ class BottomNavigationBarActivity : ComponentActivity() {
         setContent {
             MyJetpackComposeAppTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    BottomNavigationBar()
-                }
+                navController = rememberNavController()
+                BottomNavigationBar(navController)
             }
         }
     }
@@ -92,23 +92,23 @@ data class BottomNavigationItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(navController: NavHostController) {
     val bottomNavigationItems = listOf(
         BottomNavigationItem(
-            title = "Home",
+            title = HOME_SCREEN,
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
             hasNew = false
         ),
         BottomNavigationItem(
-            title = "Chat",
+            title = CHAT_SCREEN,
             selectedIcon = Icons.Filled.Chat,
             unselectedIcon = Icons.Outlined.Chat,
             hasNew = false,
             badgeCount = 10
         ),
         BottomNavigationItem(
-            title = "Setting",
+            title = SETTING_SCREEN,
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings,
             hasNew = true
@@ -189,7 +189,7 @@ fun BottomNavigationBar() {
                                 Text(text = item.badgeCount.toString())
                             }
 
-                            if(item.hasNew) {
+                            if (item.hasNew) {
                                 Badge()
                             }
                         },
@@ -198,7 +198,8 @@ fun BottomNavigationBar() {
                 }
             }
         },
-        drawerState = drawerState
+        drawerState = drawerState,
+        modifier = Modifier.fillMaxSize()
     ) {
         Scaffold(
             topBar = {
@@ -229,6 +230,7 @@ fun BottomNavigationBar() {
                             selected = selectedBottomItemIndex == index,
                             onClick = {
                                 selectedBottomItemIndex = index
+                                navController.navigate(item.title)
                             },
                             label = {
                                 Text(text = item.title)
@@ -258,9 +260,10 @@ fun BottomNavigationBar() {
                         )
                     }
                 }
-            }
+            },
+            modifier = Modifier.fillMaxSize(),
         ) { values ->
-
+            NavHost(navController,values)
         }
     }
 }
@@ -273,7 +276,7 @@ fun GreetingPreview5() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            BottomNavigationBar()
+            BottomNavigationBar(rememberNavController())
         }
     }
 }
