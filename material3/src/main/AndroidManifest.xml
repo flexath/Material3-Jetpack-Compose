@@ -8,6 +8,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyJetpackComposeApp">
+        <activity android:name=".activities.TabRowActivity"
+            android:exported="false"
+            android:label="@string/title_activity_bottom_navigation_bar"
+            android:theme="@style/Theme.MyJetpackComposeApp" />
         <activity
             android:name=".activities.BottomNavigationBarActivity"
             android:exported="false"

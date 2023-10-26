@@ -3,6 +3,7 @@ package com.flexath.material3.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Spacer
@@ -48,21 +49,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.flexath.material3.nav_graph.CHAT_SCREEN
-import com.flexath.material3.nav_graph.HOME_SCREEN
 import com.flexath.material3.nav_graph.NavHost
-import com.flexath.material3.nav_graph.SETTING_SCREEN
+import com.flexath.material3.nav_graph.Screen
 import com.flexath.material3.ui.theme.MyJetpackComposeAppTheme
 import kotlinx.coroutines.launch
 
 class BottomNavigationBarActivity : ComponentActivity() {
 
-    private lateinit var navController:NavHostController
+    private lateinit var navHostController: NavHostController
 
     companion object {
         fun newIntent(context: Context): Intent {
@@ -75,8 +75,13 @@ class BottomNavigationBarActivity : ComponentActivity() {
         setContent {
             MyJetpackComposeAppTheme {
                 // A surface container using the 'background' color from the theme
-                navController = rememberNavController()
-                BottomNavigationBar(navController)
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    navHostController = rememberNavController()
+                    BottomNavigationBar(navHostController)
+                }
             }
         }
     }
@@ -92,23 +97,24 @@ data class BottomNavigationItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(navHostController: NavHostController) {
+    val context = LocalContext.current
     val bottomNavigationItems = listOf(
         BottomNavigationItem(
-            title = HOME_SCREEN,
+            title = "Home",
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
             hasNew = false
         ),
         BottomNavigationItem(
-            title = CHAT_SCREEN,
+            title = "Chat",
             selectedIcon = Icons.Filled.Chat,
             unselectedIcon = Icons.Outlined.Chat,
             hasNew = false,
             badgeCount = 10
         ),
         BottomNavigationItem(
-            title = SETTING_SCREEN,
+            title = "Setting",
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings,
             hasNew = true
@@ -173,6 +179,10 @@ fun BottomNavigationBar(navController: NavHostController) {
                             coroutineScope.launch {
                                 drawerState.close()
                             }
+
+                            if (selectedDrawerItemIndex == 1) {
+                                context.startActivity(TabRowActivity.newIntent(context))
+                            }
                         },
                         icon = {
                             Icon(
@@ -189,7 +199,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                                 Text(text = item.badgeCount.toString())
                             }
 
-                            if (item.hasNew) {
+                            if(item.hasNew) {
                                 Badge()
                             }
                         },
@@ -198,8 +208,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                 }
             }
         },
-        drawerState = drawerState,
-        modifier = Modifier.fillMaxSize()
+        drawerState = drawerState
     ) {
         Scaffold(
             topBar = {
@@ -230,7 +239,12 @@ fun BottomNavigationBar(navController: NavHostController) {
                             selected = selectedBottomItemIndex == index,
                             onClick = {
                                 selectedBottomItemIndex = index
-                                navController.navigate(item.title)
+
+                                when (selectedBottomItemIndex) {
+                                    0 -> navHostController.navigate(Screen.Home.route)
+                                    1 -> navHostController.navigate(Screen.Chat.route)
+                                    else -> navHostController.navigate(Screen.Setting.route)
+                                }
                             },
                             label = {
                                 Text(text = item.title)
@@ -260,10 +274,10 @@ fun BottomNavigationBar(navController: NavHostController) {
                         )
                     }
                 }
-            },
-            modifier = Modifier.fillMaxSize(),
+            }
         ) { values ->
-            NavHost(navController,values)
+            Log.i("Values",values.toString())
+            NavHost(navHostController = navHostController, values = values)
         }
     }
 }
